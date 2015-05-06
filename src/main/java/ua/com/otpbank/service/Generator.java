@@ -31,11 +31,11 @@ public class Generator {
     }
 
     public synchronized List<String> getCoffeeLovers() {
-        //List<String> shuffleList = Arrays.asList(coffeeLovers);
-        //Collections.shuffle(shuffleList);
-        //return shuffleList;
-
         Collections.shuffle(coffeeLovers);
         return coffeeLovers;
     }
+    public synchronized List<String> getShuffledCoffeeLovers() {
+        return coffeeLovers;
+    }
+
 }
