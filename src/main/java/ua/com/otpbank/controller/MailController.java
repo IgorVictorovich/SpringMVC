@@ -6,6 +6,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ua.com.otpbank.service.Generator;
+import ua.com.otpbank.service.SendMailService;
 
 /**
  * Created by Igor on 04.05.2015.
@@ -15,12 +16,15 @@ import ua.com.otpbank.service.Generator;
 public class MailController {
     @Autowired
     private Generator generator = Generator.getInstance();
+    @Autowired
+    private SendMailService mailService = new SendMailService();
 
     @RequestMapping(method = RequestMethod.POST)
     public String doPost(ModelMap model){
 
         model.addAttribute("shuffledList", generator.getShuffledCoffeeLovers());
       //  model.addAttribute("getList", generator.getCoffeeLovers());
+        mailService.composeNewMail();
         return "send_result";
     }
 }

@@ -1,13 +1,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context 
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	    http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<context:component-scan base-package="ua.com.otpbank.controller" />
+	<context:annotation-config xmlns:context="http://www.springframework.org/schema/context"/>
+
+	<context:component-scan base-package="ua.com.otpbank" />
+
+	<mvc:annotation-driven />
+	<!-- Load Hibernate related configuration -->
+	<import resource="hibernate-context.xml" />
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -19,6 +27,7 @@
 		</property>
 	</bean>
 	<!--Inject Participants-->
+
 	<bean id="listGenerator"  class="ua.com.otpbank.service.Generator">
 		<property name="coffeeLovers">
 			<list>
@@ -29,8 +38,15 @@
 				<value>Misha</value>
 			</list>
 		</property>
+		<!--Inject random method-->
+		<!--choose random method:
+		"simple-shuffle" - simplest method, used shuffle list one time and return result;
+		"random-based-shuffle" - shuffle list x (depends on random integer from 0 to 100) times and return result;
+		!method under construction
+		"statistics-based-shuffle" - shuffle list, then check first participant, if participant quantity is max()
+		then participant transfer to the end of list;-->
+		<property name="generatorMethod" value="random-based-shuffle"/>
 	</bean>
 
-	<!--Inject Participants emails-->
 
 </beans>

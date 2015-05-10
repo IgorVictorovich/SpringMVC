@@ -20,7 +20,9 @@
         </c:forEach>
         </tbody>
        </table>
-        <br><br>
+       <br/>
+       Generated with <i>${generatedMethod}</i> method
+       <br><br>
        Timestamp: ${timestamp}<br>
 
       <c:choose>
@@ -30,17 +32,23 @@
       <c:otherwise>You have randomized this list ${counter} times.
       <br/>
       </c:otherwise>
-        </c:choose>
+      </c:choose>
 
        <br/>
         <form action="coffee" method="post">
-         <input class="button" type="submit" value="Again!"/>
+         <input class="button" name="generate" type="submit" value="Again!"/>
          </form>
         <form action="send_result" method="post">
-         <input class="button" type="submit" value="Send result via e-mail"/>
+         <input class="button" name="send" type="submit" value="Send result via e-mail"/>
+         </form>
+        <form action="coffee" method="post">
+         <input class="button" name="persist" type="submit" value="Save result"/>
          </form>
        <br>
 
        <div align="right">Version: ${version}</div>
+       <div align="right">top: ${head}</div>
+
+
        </body>
        </html>
