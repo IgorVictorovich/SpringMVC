@@ -8,10 +8,20 @@
         <!-- We're using MySQL database so the dialect needs to MySQL as well-->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
         <!-- Enable this to see the SQL statements in the logs-->
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
+        <property name="use_sql_comments">true</property>
         <!-- This will drop our existing database and re-create a new one.
           Existing data will be deleted! -->
+        <property name="hibernate.c3p0.timeout">300</property>
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">3000</property>
 
-        <property name="hbm2ddl.auto">create</property>
+
+        <property name="hbm2ddl.auto">update</property>
+        <mapping class="ua.com.otpbank.domain.ResultHead" />
+        <mapping class="ua.com.otpbank.domain.Participants" />
+
+
     </session-factory>
+
 </hibernate-configuration>

@@ -1,48 +1,58 @@
 package ua.com.otpbank.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ua.com.otpbank.domain.ParticipantsService;
 import ua.com.otpbank.service.Generator;
+import ua.com.otpbank.service.ParticipantsService;
+import ua.com.otpbank.tools.Counter;
+import ua.com.otpbank.tools.LTimestamp;
 import ua.com.otpbank.tools.Version;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.util.Calendar;
 
 @Controller
 @RequestMapping("/coffee")
 public class GeneratorController {
-	public GeneratorController() {
-	}
+	public GeneratorController() {}
 
-	private Version version = new Version();
+	protected static Logger logger = Logger.getLogger(GeneratorController.class);
 
+
+	@Autowired
 	private HttpServletRequest request;
 
 	@Autowired
 	private Generator generator = Generator.getInstance();
-	//debug
-	ParticipantsService participantsService = new ParticipantsService();
 
-	int counter;
+	private Counter counter = Counter.getInstance();
+
+	private LTimestamp local_timestamp = LTimestamp.getInstance();
+
+	@Resource(name = "participantsService")
+	ParticipantsService participantsService;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String printWelcome(ModelMap model) {
-		counter = 1; // rollback counter on init
+	public String doGet(ModelMap model) {
+		counter.setCounter(1); // set counter on init
 
 		model.addAttribute("message", "Participants:");
 		model.addAttribute("initList", generator.getCoffeeLovers());
-		model.addAttribute("counter", counter++);
-		model.addAttribute("timestamp", new Timestamp(Calendar.getInstance().getTime().getTime()).toString());
-		model.addAttribute("version", version.getVersion());
+		model.addAttribute("counter", counter.getCounter());
+		model.addAttribute("timestamp", local_timestamp.getNextTimestamp());
+		model.addAttribute("version", new Version().getVersion());
 		model.addAttribute("generatedMethod", generator.getGeneratorMethod());
-		//debug
-		model.addAttribute("head", participantsService.getHeadOfList());
+		model.addAttribute("headOfList", participantsService.getHeadOfList());
 
+		//persist generated data
+		if(generator.getGeneratorMethod().equals("statistics-based-shuffle")){
+			model.addAttribute("statusString", participantsService.persistParticipants(generator.getShuffledCoffeeLovers()));
+		}
+		counter.setNext(); //iterate counter
 		return "index";
 
 	}
@@ -50,27 +60,21 @@ public class GeneratorController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String doPost(ModelMap model) {
 
-		if (request.getParameter("generate") != null) {
-			model.addAttribute("message", "Participants:");
-			model.addAttribute("initList", generator.getCoffeeLovers());
-			model.addAttribute("counter", counter++);
-			model.addAttribute("timestamp", new Timestamp(Calendar.getInstance().getTime().getTime()).toString());
-			model.addAttribute("version", version.getVersion());
-			model.addAttribute("generatedMethod", generator.getGeneratorMethod());
-			return "index";
-		}
-		else
-		if (request.getParameter("persist") != null){
-			model.addAttribute("message", "Participants:");
-			model.addAttribute("initList", generator.getShuffledCoffeeLovers());
-			model.addAttribute("counter", counter);
-			//model.addAttribute("timestamp", new Timestamp(Calendar.getInstance().getTime().getTime()).toString());
-			model.addAttribute("version", version.getVersion());
-			model.addAttribute("generatedMethod", generator.getGeneratorMethod());
-			return "index";
-		}
+		model.addAttribute("message", "Participants:");
+		model.addAttribute("initList", generator.getCoffeeLovers());
+		model.addAttribute("counter", counter.getCounter());
+		model.addAttribute("timestamp", local_timestamp.getNextTimestamp());
+		model.addAttribute("version",  new Version().getVersion());
+		model.addAttribute("generatedMethod", generator.getGeneratorMethod());
+		model.addAttribute("headOfList", participantsService.getHeadOfList());
 
+		//persist generated data
+		if(generator.getGeneratorMethod().equals("statistics-based-shuffle")){
+			model.addAttribute("statusString", participantsService.persistParticipants(generator.getShuffledCoffeeLovers()));
+		}
+		counter.setNext(); //iterate counter
 		return "index";
+
 	}
 
 }

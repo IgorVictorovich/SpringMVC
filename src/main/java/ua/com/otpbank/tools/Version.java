@@ -7,7 +7,7 @@ import java.util.Properties;
  * Created by Igor on 09.05.2015.
  */
 public class Version {
-    public synchronized String getVersion() {
+    public String getVersion() {
         String version = null;
 
         // try to load from maven properties first

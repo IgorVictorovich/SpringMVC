@@ -1,7 +1,6 @@
 package ua.com.otpbank.service;
 
-import ua.com.otpbank.domain.ParticipantsService;
-
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -27,6 +26,9 @@ public class Generator {
         }
         return localInstance;
     }
+
+    @Resource(name = "participantsService")
+    ParticipantsService participantsService;
 
     private  List<String> coffeeLovers;
 
@@ -56,7 +58,7 @@ public class Generator {
             }
         }
         if(getGeneratorMethod().equals("statistics-based-shuffle")){
-            ParticipantsService participantsService = new ParticipantsService();
+
             Collections.shuffle(coffeeLovers);
             participantsService.changeListOrder(coffeeLovers);
         }
@@ -65,6 +67,8 @@ public class Generator {
         return coffeeLovers;
     }
     public synchronized List<String> getShuffledCoffeeLovers() {
+        if (coffeeLovers.isEmpty())
+            return getCoffeeLovers();
         return coffeeLovers;
     }
 

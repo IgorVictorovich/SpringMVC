@@ -10,6 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name = "RESULTS")
 public class Participants  implements Serializable {
+
     private static final long serialVersionUID=-5527566248002296042L;
     @Id
     @Column(name = "ID")
@@ -28,43 +29,43 @@ public class Participants  implements Serializable {
     @Column(name = "TIMESTAMP")
     private Date timestamp;
 
-    public void setId(Integer id) {
+    public synchronized void setId(Integer id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public synchronized Integer getId() {
         return id;
     }
 
-    public String getUuid() {
+    public synchronized String getUuid() {
         return uuid;
     }
 
-    public void setUuid(String uuid) {
+    public synchronized void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
-    public Integer getOrderNo() {
+    public synchronized Integer getOrderNo() {
         return orderNo;
     }
 
-    public void setOrderNo(Integer orderNo) {
+    public synchronized void setOrderNo(Integer orderNo) {
         this.orderNo = orderNo;
     }
 
-    public String getName() {
+    public synchronized String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public synchronized void setName(String name) {
         this.name = name;
     }
 
-    public Date getTimestamp() {
+    public synchronized Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public synchronized void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 }
